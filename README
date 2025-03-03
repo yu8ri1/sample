@@ -1,0 +1,77 @@
+
+##### docker コンテナ ####
+docker pull yu8ri1/pointrcnn:master
+
+https://hub.docker.com/repository/docker/yu8ri1/pointrcnn/tags
+
+ID: yu8ri1 
+PASS: virbib-Xumwo8-dyjdyd
+
+###############フォルダ説明#############
+    /DIVP：DIVP関連のデータ（だいぶ前にもらったやつ(学習評価には使用していない)）
+    /nuscenes：nuscenesの元データ
+
+    /pcdet_ori/OpenPCDET：pcdetの学習評価フォルダ
+#####################################
+
+##########データ説明###############
+
+    /data/custom            ：いつぞやのDIVPのもらったデータ（使ってない）
+
+    ############# nuScenesデータ #############
+    /data/nuscenes
+
+    ############# DIVO：FOVで区切ったデータ #############
+    /data/SIP_ariake1_ver5  ：評価用データ(ariake1)
+    /data/SIP_ariake2_ver5  ：評価用データ(ariake2)
+    /data/SIP_trainval_ver4 ：Beam16用の学習・評価データ（青梅交差点：学習用データの交差点）
+    /data/SIP_train_ver3    ：Beam128用の学習・評価データ（青梅交差点：学習用データの交差点）
+
+    ############# DIVP全方位のデータ      #############
+    /data/DIVP_ORI          ：DIVPの青梅交差点学習・ariake1．ariake2評価データ
+
+#############################################
+
+############ cfgの説明 ############
+
+
+    ########DIVPモデルCFG############
+    /tools/cfgs/SIP             ：bevfusion_multi.yaml          (360PC + 6 Image)
+    /tools/cfgs/SIP             ：bevfusion.yaml                (FOVPC + 1 Image)
+    /tools/cfgs/SIP             ：transfusion_lidar_multi.yaml  (360PC)
+    /tools/cfgs/SIP             ：transfusion_lidar.yaml        (FOVPC)
+    ########DIVPデータCFG############
+    ##FOV##
+    /tools/cfgs/dataset_configs     ：SIP_dataset_ariake.yaml　 (TransFusion用：ariake1・２の評価用)
+                                    ：SIP_image_dataset_ariake.yaml　(BEVFusion用：ariake1・２の評価用)
+                                    ：SIP_image_dataset.yaml 　（BEVFusion用：青梅交差点の学習・評価用）
+                                    ：SIP_dataset.yaml         （TransFusion用：青梅交差点の学習・評価用）
+
+    ##360##
+                                    ：SIP_image_dataset_multi.yaml  （BEVFusion用：青梅交差点の学習・評価用）
+                                    ：SIP_image_dataset_box.yaml　  （BEVFusion用：ariake1・２の評価用）
+                                    ：SIP_dataset_box.yaml　　　　   （TransFusion用：ariake1・２の評価用）
+
+    ########nuscenes############
+    /tools/cfgs/nuscenes_models ：bevfusion.yaml     
+    /tools/cfgs/nuscenes_models ：transfusion_lidar.yaml  
+
+####学習・評価プログラム#####
+--cfg_file　と　--ckptを指定
+    tools/train.py, test.py 
+
+####アテンション######
+--cfg_file　と　--ckptを指定
+    ・勾配
+    bbox_backpropV4_3_cam_eval.py   画素の重要度（定量）
+    bbox_backpropV4_3_cam.py    画素の重要度
+    bbox_backpropV4_3_eval.py   点群の重要度（定量）
+    bbox_backpropV4_3.py    点群の重要度
+    ・摂動
+    bbox_adversal.py    
+
+####学習済みモデル####
+    train_mode_ver3/nus/  ：速度考慮なしnusモデル
+    train_mode_ver8/nus/  ：DIVP 360モデル
+    train_mode_ver10/nus/  ：DIVP FOVモデル
+
